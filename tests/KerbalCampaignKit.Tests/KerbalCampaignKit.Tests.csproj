@@ -17,4 +17,11 @@
     <ProjectReference Include="..\..\src\KerbalCampaignKit\KerbalCampaignKit.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="KerbalDialogueKit">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalDialogueKit\Plugins\KerbalDialogueKit.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
 </Project>
