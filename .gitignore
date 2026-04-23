@@ -1,0 +1,21 @@
+# Build outputs
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# Exclude compiled DLL from source tree (built into Plugins/ by build)
+src/*/bin/
+src/*/obj/
+tests/*/bin/
+tests/*/obj/
+
+# But DO ship Plugins/KerbalCampaignKit.dll — that's the installed artifact
+!Plugins/*.dll
+# Don't commit debug symbol files
+Plugins/*.pdb
+
+# Editor
+.idea/
+*.swp
