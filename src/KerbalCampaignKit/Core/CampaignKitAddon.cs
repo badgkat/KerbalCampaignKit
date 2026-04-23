@@ -75,6 +75,11 @@ namespace KerbalCampaignKit.Core
 
             LoadContent();
 
+            // Replay fired-once trigger IDs that were buffered during OnLoad
+            // (before the engine existed). Must run after LoadContent so the
+            // triggers themselves are registered.
+            scenario.ApplyBufferedFiredTriggers();
+
             flagSource = new FlagEventSource();
             timeSource = new TimeEventSource();
             facilitySource = new FacilityEventSource();

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using KerbalCampaignKit.Chapters;
 using KerbalCampaignKit.Notifications;
 using KerbalCampaignKit.PendingScenes;
@@ -18,10 +19,21 @@ namespace KerbalCampaignKit.Core
         public ReputationEconomy Reputation = new ReputationEconomy();
         public TriggerEngine Engine;  // wired by addon after scenario loads
 
+        // OnLoad runs before the addon wires the engine, so buffer fired-once IDs
+        // and let the addon replay them via ApplyBufferedFiredTriggers() after wiring.
+        private readonly List<string> bufferedFiredTriggerIds = new List<string>();
+
         public override void OnAwake()
         {
             base.OnAwake();
             Instance = this;
+        }
+
+        public void ApplyBufferedFiredTriggers()
+        {
+            if (Engine == null) return;
+            foreach (var id in bufferedFiredTriggerIds) Engine.MarkFired(id);
+            bufferedFiredTriggerIds.Clear();
         }
 
         public override void OnSave(ConfigNode node)
@@ -89,10 +101,12 @@ namespace KerbalCampaignKit.Core
                 }
             }
 
-            if (node.HasNode("FIRED_TRIGGERS") && Engine != null)
+            if (node.HasNode("FIRED_TRIGGERS"))
             {
+                bufferedFiredTriggerIds.Clear();
                 foreach (var id in node.GetNode("FIRED_TRIGGERS").GetValues("trigger"))
-                    Engine.MarkFired(id);
+                    bufferedFiredTriggerIds.Add(id);
+                if (Engine != null) ApplyBufferedFiredTriggers();
             }
 
             if (node.HasNode("PENDING_SCENES"))
