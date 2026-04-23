@@ -1,3 +1,5 @@
+using KerbalCampaignKit.Chapters;
+
 namespace KerbalCampaignKit.Core
 {
     /// <summary>
@@ -6,5 +8,6 @@ namespace KerbalCampaignKit.Core
     /// </summary>
     public static class CampaignKit
     {
+        public static ChapterManager Chapters { get; internal set; }
     }
 }
