@@ -85,5 +85,24 @@ namespace KerbalCampaignKit.Tests
             Assert.Empty(store.AtOrBelow("admin"));
             Assert.Single(store.At("tracking"));
         }
+
+        [Fact]
+        public void FiresAddedEvent()
+        {
+            Notification seen = null;
+            System.Action<Notification> handler = n => seen = n;
+            CampaignKitEvents.OnNotificationAdded += handler;
+            try
+            {
+                var store = new NotificationStore();
+                var note = Make("admin", NotificationSeverity.Info, "x");
+                store.Add(note);
+                Assert.Same(note, seen);
+            }
+            finally
+            {
+                CampaignKitEvents.OnNotificationAdded -= handler;
+            }
+        }
     }
 }

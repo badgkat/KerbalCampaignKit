@@ -8,7 +8,11 @@ namespace KerbalCampaignKit.Notifications
 
         public IReadOnlyList<Notification> All => items;
 
-        public void Add(Notification n) => items.Add(n);
+        public void Add(Notification n)
+        {
+            items.Add(n);
+            CampaignKitEvents.FireNotificationAdded(n);
+        }
 
         public List<Notification> At(string target)
         {
@@ -41,12 +45,16 @@ namespace KerbalCampaignKit.Notifications
 
         public void Clear(string target, string source = null)
         {
+            var removed = items.FindAll(n => n.Target == target && (source == null || n.Source == source));
             items.RemoveAll(n => n.Target == target && (source == null || n.Source == source));
+            foreach (var r in removed) CampaignKitEvents.FireNotificationCleared(r);
         }
 
         public void ClearAll(string targetPrefix)
         {
+            var removed = items.FindAll(n => IsAtOrBelow(n.Target, targetPrefix));
             items.RemoveAll(n => IsAtOrBelow(n.Target, targetPrefix));
+            foreach (var r in removed) CampaignKitEvents.FireNotificationCleared(r);
         }
 
         public bool HasAny(string target)

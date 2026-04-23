@@ -1,4 +1,5 @@
 using System;
+using KerbalCampaignKit.Notifications;
 
 namespace KerbalCampaignKit.Chapters
 {
@@ -16,6 +17,7 @@ namespace KerbalCampaignKit.Chapters
             Current = chapterId;
             History.RecordEntry(chapterId, timestampSeconds);
             OnChapterChanged?.Invoke(previous, chapterId);
+            CampaignKitEvents.FireChapterChanged(previous, chapterId);
         }
 
         public bool HasEntered(string chapterId) => History.HasEntered(chapterId);
