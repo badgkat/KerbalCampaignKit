@@ -33,9 +33,25 @@ namespace KerbalCampaignKit.Triggers.Events
         private void Fire(EventType type, Contract contract)
         {
             if (sink == null || contract == null) return;
+            var name = ContractTypeName(contract);
             var record = new EventRecord { Type = type };
-            record.Params["contract"] = ContractTypeName(contract);
+            record.Params["contract"] = name;
             sink(record);
+
+            var state = StateForType(type);
+            ContractStateFlagPublisher.Publish(KerbalDialogueKit.Core.DialogueKit.Flags, name, state);
+        }
+
+        private static string StateForType(EventType type)
+        {
+            switch (type)
+            {
+                case EventType.ContractAccepted:  return "accepted";
+                case EventType.ContractComplete:  return "complete";
+                case EventType.ContractFailed:    return "failed";
+                case EventType.ContractCancelled: return "cancelled";
+                default: return null;
+            }
         }
 
         private static string ContractTypeName(Contract c)
