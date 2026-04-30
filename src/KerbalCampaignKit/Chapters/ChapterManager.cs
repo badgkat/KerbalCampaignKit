@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using KerbalCampaignKit.Notifications;
 
 namespace KerbalCampaignKit.Chapters
@@ -7,6 +8,29 @@ namespace KerbalCampaignKit.Chapters
     {
         public string Current { get; private set; }
         public ChapterHistory History { get; } = new ChapterHistory();
+
+        // Registry of cfg-defined chapter definitions, keyed by Id.
+        // Populated at startup by ChapterRegistration; consumed by code/cfg
+        // that needs the human-readable name, description, or trigger ids.
+        private readonly Dictionary<string, Chapter> definitions =
+            new Dictionary<string, Chapter>();
+
+        public IReadOnlyDictionary<string, Chapter> Definitions => definitions;
+
+        public void RegisterDefinition(Chapter chapter)
+        {
+            if (chapter == null || string.IsNullOrEmpty(chapter.Id)) return;
+            definitions[chapter.Id] = chapter;
+        }
+
+        public bool HasDefinition(string chapterId) =>
+            !string.IsNullOrEmpty(chapterId) && definitions.ContainsKey(chapterId);
+
+        public Chapter GetDefinition(string chapterId)
+        {
+            if (string.IsNullOrEmpty(chapterId)) return null;
+            return definitions.TryGetValue(chapterId, out var c) ? c : null;
+        }
 
         public event Action<string, string> OnChapterChanged;
 

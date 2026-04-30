@@ -132,6 +132,12 @@ namespace KerbalCampaignKit.Core
                 if (trigger != null) engine.Register(trigger);
             }
 
+            var chapterCfgs = GameDatabase.Instance.GetConfigNodes("CAMPAIGN_CHAPTER");
+            var chapterNodes = new List<ISceneNode>(chapterCfgs.Length);
+            foreach (var chapterCfg in chapterCfgs)
+                chapterNodes.Add(new ConfigNodeAdapter(chapterCfg));
+            ChapterRegistration.RegisterAll(chapterNodes, scenario.Chapters);
+
             var incomeNodes = GameDatabase.Instance.GetConfigNodes("REPUTATION_INCOME");
             if (incomeNodes.Length > 0)
                 scenario.Reputation.Income = ReputationLoader.LoadIncome(new ConfigNodeAdapter(incomeNodes[0]));
