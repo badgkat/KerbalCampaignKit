@@ -37,6 +37,8 @@ namespace KerbalCampaignKit.Core
         private void OnDestroy()
         {
             GameEvents.onLevelWasLoaded.Remove(OnLevelLoaded);
+            DialogueKit.OnAnyChoiceMade -= OnDialogueChoiceMade;
+            DialogueKit.OnAnySceneEnded -= OnDialogueSceneEnded;
             foreach (var s in sources) s.Unregister();
         }
 
@@ -105,6 +107,9 @@ namespace KerbalCampaignKit.Core
             CampaignKit.Reputation = scenario.Reputation;
             CampaignKit.Engine = engine;
 
+            DialogueKit.OnAnyChoiceMade += OnDialogueChoiceMade;
+            DialogueKit.OnAnySceneEnded += OnDialogueSceneEnded;
+
             lastTickSeconds = Planetarium.GetUniversalTime();
         }
 
@@ -155,6 +160,16 @@ namespace KerbalCampaignKit.Core
                 case GameScenes.EDITOR: CampaignKit.FireFacilityEntered("VehicleAssemblyBuilding"); break;
                 case GameScenes.TRACKSTATION: CampaignKit.FireFacilityEntered("TrackingStation"); break;
             }
+        }
+
+        private void OnDialogueChoiceMade(string sceneId, string choiceId, string value)
+        {
+            sceneSource?.FireChoiceMade(sceneId, choiceId, value);
+        }
+
+        private void OnDialogueSceneEnded(string sceneId)
+        {
+            sceneSource?.FireSceneEnded(sceneId);
         }
 
         private void PlayPendingForScene(GameScenes scene)

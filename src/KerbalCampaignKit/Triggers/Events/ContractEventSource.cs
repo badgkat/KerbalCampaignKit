@@ -63,9 +63,13 @@ namespace KerbalCampaignKit.Triggers.Events
                 var val = prop.GetValue(c, null);
                 if (val != null)
                 {
-                    var nameProp = val.GetType().GetProperty("name");
+                    var t = val.GetType();
+                    var nameProp = t.GetProperty("name");
                     if (nameProp != null)
                         return (string)nameProp.GetValue(val, null);
+                    var nameField = t.GetField("name");
+                    if (nameField != null)
+                        return (string)nameField.GetValue(val);
                 }
             }
             return configuredType.Name;
